@@ -7,7 +7,7 @@ import { CARE_NAV_VIEW, PROVIDER_VIEW } from "@/lib/constants";
 import ProviderView from "@/components/modules/ProviderView";
 
 const Page = () => {
-	const [currentView, setCurrentView] = useState(PROVIDER_VIEW);
+	const [currentView, setCurrentView] = useState(CARE_NAV_VIEW);
 
 	const toggleView = () => {
 		setCurrentView((prevView) => (prevView === CARE_NAV_VIEW ? PROVIDER_VIEW : CARE_NAV_VIEW));

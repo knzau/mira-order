@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Button } from "../ui/Button";
 import CardContainer from "./CardContainer";
 import { formatOrderData, renderData } from "@/lib/utils";
@@ -7,6 +7,8 @@ import { orderMockData } from "@/lib/orderMockData";
 import { ICareGiverData } from "@/lib/types";
 import { camelToCapitalized } from "@/lib/utils";
 import { useToggleView } from "@/lib/hooks";
+import { mockMessages } from "@/lib/constants";
+import Chat from "./Chat";
 
 interface CareNavProps {
 	switchViewButton: React.ReactNode;
@@ -17,7 +19,11 @@ const CareNavigatorView: FC<CareNavProps> = ({ switchViewButton }) => {
 
 	const { careNavProvider, careGiverToggleData }: ICareGiverData = formatOrderData(orderMockData);
 
-	const RenderElements = ({ elements }: { elements: HTMLParagraphElement[] }) => {
+	const handleSendMessage = (message: { sender: string; content: string }) => {
+		console.log("New message sent:", message);
+	};
+
+	const renderElements = (elements: HTMLParagraphElement[]) => {
 		return elements.map((paragraph, index) => (
 			<React.Fragment key={index}>
 				{React.createElement("p", null, paragraph.textContent)}
@@ -37,14 +43,7 @@ const CareNavigatorView: FC<CareNavProps> = ({ switchViewButton }) => {
 						<strong className="text-xl cursor-pointer mb-2 font-bold">
 							{camelToCapitalized(contentKey)}
 						</strong>
-						<p className="mb-2">
-							{renderData(contentValue).map((paragraph, index) => (
-								<React.Fragment key={index}>
-									{React.createElement("p", null, paragraph.textContent)}
-									<br />
-								</React.Fragment>
-							))}
-						</p>
+						<p className="mb-2">{renderElements(renderData(contentValue))}</p>
 					</div>
 				))}
 
@@ -69,13 +68,7 @@ const CareNavigatorView: FC<CareNavProps> = ({ switchViewButton }) => {
 			</div>
 			<div className="mt-4">
 				{Object.entries(careGiverToggleData).map(([dataKey, dataValue]) => {
-					const careGiverContentMap = renderData(dataValue);
-					const content = careGiverContentMap.map((paragraph, index) => (
-						<React.Fragment key={index}>
-							{React.createElement("p", null, paragraph.textContent)}
-							<br />
-						</React.Fragment>
-					));
+					const content = renderElements(renderData(dataValue));
 					return <div key={dataKey}>{dataKey === activeContent ? content : null}</div>;
 				})}
 			</div>
@@ -87,6 +80,9 @@ const CareNavigatorView: FC<CareNavProps> = ({ switchViewButton }) => {
 				<Button className="text-base" variant="destructive">
 					Cancel Order
 				</Button>
+			</div>
+			<div className="my-8">
+				<Chat initialMessages={mockMessages} onSendMessage={handleSendMessage} />
 			</div>
 		</CardContainer>
 	);
